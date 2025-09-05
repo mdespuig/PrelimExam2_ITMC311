@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <form id="loginForm">
+        <div>Username</div>
+        <input type="text" id="username" placeholder="Username" required>
+        <div>Password</div>
+        <input type="password" id="password" placeholder="Password" required>
+        <div>Code</div>
+        <input type="text" id="authKey" placeholder="Authentication Code" required>
+        <button type="submit">Login</button>
+    </form>
+    <a href="Registration.html" class="loginLink"> Register Here</a>
+
+    <p id="responseMessage"></p>
+  </div>
+
+  <script>
+    const LOGIN_URL = "https://prelim-exam.onrender.com/login";
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const authKey = document.getElementById("authKey").value.trim();
+
+      const responseMessage = document.getElementById("responseMessage");
+
+      try {
+        const res = await fetch(LOGIN_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, authKey })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          responseMessage.style.color = "green";
+          responseMessage.textContent = `Login successful! Welcome, ${data.username || username}`;
+
+          const userId = data.id || data._id || data.user?._id;
+          if (userId) localStorage.setItem("loggedInUserId", userId);
+
+          localStorage.setItem("loggedInUser", data.username || username);
+          if (data.code) localStorage.setItem("loggedInUserCode", data.code);
+
+          window.location.href = "Homepage.html";
+        } else {
+          responseMessage.style.color = "red";
+          responseMessage.textContent = `Error: ${data.message || "Login failed"}`;
+        }
+      } catch (err) {
+        console.error("POST error:", err);
+        responseMessage.style.color = "red";
+        responseMessage.textContent = "Network error. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>

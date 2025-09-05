@@ -1,0 +1,133 @@
+* {
+  font-family: "Saira", sans-serif;
+}
+
+body {
+  background: #f5f6fa;
+  margin: 0;
+  padding: 20px;
+  font-size: 14px;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+h1 {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.308);
+  border-radius: 6px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #28a745;
+  color: white;
+  font-weight: bold;
+  transition: all 0.5s ease;
+}
+
+button:hover {
+  background: #218838;
+}
+
+#responseMessage {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.loginLink {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  text-decoration: none;
+  color: #fd7070;
+  font-weight: bold;
+  transition: color 0.5s ease;
+}
+
+.loginLink:hover {
+  color: #630202;
+}
+
+.back-link {
+  font-size: 24px;
+  text-decoration: none;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.back-link:hover {
+  color: #218838;
+}
+
+form label {
+  display: inline-flex;
+  align-items: center;
+  margin: 8px 10px 8px 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+form input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  margin-right: 6px;
+  position: relative;
+  cursor: pointer;
+  transition: border 0.3s ease, background 0.3s ease;
+}
+
+form input[type="radio"]:checked {
+  border-color: #28a745;
+  background-color: #28a745;
+}
+
+form input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}

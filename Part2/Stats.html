@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stats</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    .json-display {
+      margin-top: 15px;
+      background: #f8f9fa;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <a href="Homepage.html" class="back-link" title="Go back to Homepage">←</a>
+      <h1 style="flex-grow: 1; text-align: center; margin: 0;">Stats</h1>
+    </div>
+
+    <div class="button-container">
+      <button id="countPetsBtn">Count Pets</button>
+      <button id="petAgesBtn">Pet Ages</button>
+      <button id="countUsersBtn">Count Users</button>
+    </div>
+
+    <pre id="jsonDisplay" class="json-display"></pre>
+  </div>
+
+  <script>
+    const jsonDisplay = document.getElementById("jsonDisplay");
+
+    async function fetchJSON(url) {
+      try {
+        const res = await fetch(url, { method: "GET" });
+        const data = await res.json();
+        jsonDisplay.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        jsonDisplay.textContent = "Network error. Could not fetch data.";
+      }
+    }
+
+    document.getElementById("countPetsBtn").addEventListener("click", () => {
+      fetchJSON("https://prelim-exam.onrender.com/stats/pets/count");
+    });
+
+    document.getElementById("petAgesBtn").addEventListener("click", () => {
+      fetchJSON("https://prelim-exam.onrender.com/stats/users/ages");
+    });
+
+    document.getElementById("countUsersBtn").addEventListener("click", () => {
+      fetchJSON("https://prelim-exam.onrender.com/stats/users/count");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Details</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <a href="Homepage.html" class="back-link" title="Go back to Homepage">←</a>
+      <h1 style="flex-grow: 1; text-align: center; margin: 0;">Change User Details</h1>
+    </div>
+
+    <form id="changeUsernameForm">
+      <br/>
+      <div>Username</div>
+      <input type="text" id="username">
+      
+      <br/>
+      <div>Role</div>
+      <label>
+        <input type="radio" name="role" value="student">Student
+      </label>
+      <label>
+        <input type="radio" name="role" value="admin">Admin
+      </label>
+
+      <br/>
+      <button type="submit">Save</button>
+    </form>
+
+    <p id="responseMessage"></p>
+    <pre id="jsonDisplay" 
+         style="margin-top: 20px;
+                background: #f8f9fa;
+                padding: 12px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                overflow-x: auto;
+                max-height: 400px;
+                overflow-y: auto;"></pre>
+  </div>
+
+  <script>
+    const BASE_URL = "https://prelim-exam.onrender.com/users";
+    const userId = localStorage.getItem("loggedInUserId");
+
+    if (!userId) {
+      alert("⚠️ No user is logged in. Please login first.");
+      window.location.href = "Login.html";
+    }
+
+    async function fetchUserData() {
+      try {
+        const res = await fetch(`${BASE_URL}/${userId}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById("jsonDisplay").textContent = JSON.stringify(data, null, 2);
+
+          if (data.username) document.getElementById("username").placeholder = `Current: ${data.username}`;
+          if (data.role) {
+            const roleRadio = document.querySelector(`input[name="role"][value="${data.role}"]`);
+            if (roleRadio) roleRadio.checked = true;
+          }
+        } else {
+          document.getElementById("jsonDisplay").textContent = `Error: ${data.message || "Failed to load user"}`;
+        }
+      } catch (err) {
+        console.error("GET error:", err);
+        document.getElementById("jsonDisplay").textContent = "Network error. Could not load user.";
+      }
+    }
+
+    fetchUserData();
+
+    document.getElementById("changeUsernameForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const newUsername = document.getElementById("username").value.trim();
+      const newRole = document.querySelector('input[name="role"]:checked')?.value;
+      const responseMessage = document.getElementById("responseMessage");
+
+      const payload = {};
+      if (newUsername) payload.username = newUsername;
+      if (newRole) payload.role = newRole;
+
+      try {
+        const res = await fetch(`${BASE_URL}/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          responseMessage.style.color = "green";
+          responseMessage.textContent = "User updated successfully!";
+          document.getElementById("jsonDisplay").textContent = JSON.stringify(data, null, 2);
+
+          if (data.username) localStorage.setItem("loggedInUser", data.username);
+        } else {
+          responseMessage.style.color = "red";
+          responseMessage.textContent = `Error: ${data.message || "Update failed"}`;
+        }
+      } catch (err) {
+        console.error("PATCH error:", err);
+        responseMessage.style.color = "red";
+        responseMessage.textContent = "Network error. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homepage</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div>
+      <h1>Welcome, <span id="usernameDisplay"></span>!</h1>
+    </div>
+    
+    <div class="button-container">
+      <button onclick="window.location.href='Users.html'">Users</button>
+      <button onclick="window.location.href='Pets.html'">Pets</button>
+      <button onclick="window.location.href='Stats.html'">Stats</button>
+    </div>
+    <div class="button-container">
+      <button id="logoutButton" style="background: #dc3545; color: white; border: none; border-radius: 6px; padding: 10px; cursor: pointer;">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    const BASE_URL = "https://prelim-exam.onrender.com";
+    const loggedInUserId = localStorage.getItem("loggedInUserId");
+
+    if (!loggedInUserId) {
+      alert("Access denied. Please log in first.");
+      window.location.href = "Login.html";
+    }
+
+    async function fetchUsername() {
+      try {
+        const res = await fetch(`${BASE_URL}/users/${loggedInUserId}`, { method: "GET" });
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById("usernameDisplay").textContent = data.username || "User";
+        } else {
+          alert("Failed to fetch username. Redirecting to login.");
+          window.location.href = "Login.html";
+        }
+      } catch (err) {
+        console.error("Fetch username error:", err);
+        alert("Network error. Redirecting to login.");
+        window.location.href = "Login.html";
+      }
+    }
+
+    fetchUsername();
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/logout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (res.ok) {
+          localStorage.removeItem("loggedInUser");
+          localStorage.removeItem("loggedInUserId");
+          alert("You have been logged out.");
+          window.location.href = "Login.html";
+        } else {
+          alert("Failed to log out. Please try again.");
+        }
+      } catch (err) {
+        console.error("Logout error:", err);
+        alert("Network error. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

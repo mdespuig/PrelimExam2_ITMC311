@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Registration</h1>
+    <form id="registrationForm">
+      <div>Username</div>
+      <input type="text" id="username" placeholder="Username" required>
+
+      <div>Password</div>
+      <input type="password" id="password" placeholder="Password" required>
+
+      <div>Age</div>
+      <input type="number" id="age" placeholder="Age" required>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <a href="Login.html" class="loginLink">Login here</a>
+
+    <p id="responseMessage"></p>
+    <pre id="jsonDisplay" style="margin-top: 20px; background: #f8f9fa; padding: 10px; border: 1px solid #ccc; border-radius: 6px;"></pre>
+  </div>
+
+  <script>
+    const SIGNUP_URL = "https://prelim-exam.onrender.com/signup";
+
+    document.getElementById("registrationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const age = document.getElementById("age").value;
+
+      const responseMessage = document.getElementById("responseMessage");
+
+      try {
+        const res = await fetch(SIGNUP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, age })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const userId = data.id || data.user?._id;
+          const userName = data.username || data.user?.username || username;
+          const code = data.code;
+
+          if (userId) localStorage.setItem("loggedInUserId", userId);
+          if (userName) localStorage.setItem("loggedInUser", userName);
+          if (code) localStorage.setItem("loggedInUserCode", code);
+
+          responseMessage.style.color = "green";
+          responseMessage.textContent = `Registration successful! Your ID: ${userId}`;
+
+          displayJsonResponse(data);
+        } else {
+          responseMessage.style.color = "red";
+          responseMessage.textContent = `Error: ${data.message || "Registration failed"}`;
+          displayJsonResponse(data);
+        }
+      } catch (err) {
+        console.error("POST error:", err);
+        responseMessage.style.color = "red";
+        responseMessage.textContent = "Network error. Please try again.";
+      }
+    });
+
+    function displayJsonResponse(jsonData) {
+      const jsonDisplay = document.getElementById("jsonDisplay");
+      if (jsonDisplay) {
+        jsonDisplay.textContent = JSON.stringify(jsonData, null, 2);
+        jsonDisplay.style.whiteSpace = "pre-wrap";
+      }
+    }
+  </script>
+</body>
+</html>
